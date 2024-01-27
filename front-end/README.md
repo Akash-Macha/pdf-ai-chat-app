@@ -13,3 +13,7 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+# Q&A
+- Could not resolve "@emotion/styled" imported by "@mui/styled-engine". Is it installed?
+    - [fix](https://stackoverflow.com/a/69421929)
