@@ -2,6 +2,8 @@
 
 - Created using [Vite](https://vitejs.dev/guide/) + React + JavaScript SWC Template
 
+- Using
+    - [MUI](https://mui.com/material-ui/getting-started/installation/) - using [styled-components](https://mui.com/material-ui/guides/styled-components/)
 
 # React + Vite
 
