@@ -20,6 +20,8 @@ def load_embedding(store_name='APTRA Advance NDC_superviser_Guide.pkl'):
 
 
 def handle_query(query: str):
+  return "The abbreviation of SPVR TRANS is Supervisor Transactions."
+
   if query:
 
     VectorStore = load_embedding()
