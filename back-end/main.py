@@ -2,6 +2,7 @@ import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from handle_query import handle_query
 
 
 class Question(BaseModel):
@@ -25,16 +26,9 @@ def get_loaded_pdfs():
         "total_count": len(pickles)
     }
 
-# @app.post('/query')
-# def query(question: Question):
-#     print("[query]: " + question.question)
-#     return {"Data": question.question}
-
-# @app.post('/')
-# def hello_post():
-#     return {"Success": "You posted!"}
-
-# @app.get('/something')
-# def something():
-#     return {"Data": "Something"}
-
+@app.post('/query')
+def query(question: Question):
+    print("[query]: " + question.question)
+    response = handle_query(question.question)
+    print("[query]: " + response)
+    return {"Response": response}
