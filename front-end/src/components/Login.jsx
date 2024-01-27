@@ -1,8 +1,10 @@
 
 import { useCallback, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 
 const Login = () => {
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -12,8 +14,11 @@ const Login = () => {
     console.log('validate = ', email);
     console.log('validate = ', password);
 
-    if (email === 'am185774@ncratleos.com' && password === 'machaTest') {
+    if (email === 'test@test.com' && password === 'test') {
       setError(null);
+      navigate("/chat-with-pdf");
+
+      console.log("Authenticated and navigating!");
     } else {
       setError('Please enter correct credentials.');
     }
