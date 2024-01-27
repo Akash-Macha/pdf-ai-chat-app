@@ -1,10 +1,13 @@
 import { useCallback, useState } from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import './ChatScreen.css';
+import { useComments } from "../../hooks/use-query-pdf";
 
 const ChatScreen = () => {
+  const { isLoading, data, isError, error, refetch } = useComments();
   const [question, setQuestion] = useState('');
   const [questionAndAnswers, setQuestionAndAnswers] = useState([{
+    key: 1,
     question: 'What are the options available in the Supervisor Menu?',
     answer: `
     1. Test\n
@@ -18,15 +21,15 @@ const ChatScreen = () => {
    * }
    */
 
-  const handleQuestion = useCallback(() => {
-
-  }, []);
+  const handleQuestion = useCallback(async () => {
+    console.log('[handleQuestion] question:', question)
+  }, [question]);
 
   return (
     <>
-      <h3>Chat Screen</h3>
+      <h3>Chat Screen:</h3>
       {questionAndAnswers.length !== 0 ? questionAndAnswers.map(questionAndAnswer => (
-        <Card variant="outlined" className="qAndACard">
+        <Card variant="outlined" className="qAndACard" key={questionAndAnswer.key}>
           <CardContent>
             <Typography variant="subtitle2">
               Question: {questionAndAnswer.question}
