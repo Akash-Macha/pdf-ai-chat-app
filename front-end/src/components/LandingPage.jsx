@@ -7,7 +7,8 @@ const LandingPage = () => {
       <Header />
       <Login />
       <p className="read-the-docs">
-        Made with love ❤️ by Akash Macha
+        Made with love ♥ by Akash Macha
+        {/* Made with love 💓 by Akash Macha */}
       </p>
     </>
   )
