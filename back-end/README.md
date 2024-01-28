@@ -11,3 +11,6 @@
     - To install the dependencies
 - uvicorn main:app --reload
     - To Run the server
+
+## Helpful resources:
+- [How to enable CORS in FastAPI](https://fastapi.tiangolo.com/tutorial/cors/#more-info)

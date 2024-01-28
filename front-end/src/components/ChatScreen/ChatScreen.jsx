@@ -3,7 +3,9 @@ import { Card, CardContent, Typography } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import QuestionInput from "./QuestionInput";
 import "./ChatScreen.css";
-import { useLoadedPdfs } from "../../hooks/use-loaded-pdfs";
+import { useMutation, useQueryClient } from "react-query";
+import axios from "../../axios-api";
+import { extractData } from '../../utils'
 
 const parentQAndACardStyles = {
   textAlign: 'left',
@@ -11,10 +13,9 @@ const parentQAndACardStyles = {
   backgroundColor: "#ededed",
 };
 
-const ChatScreen = () => {
-  const { isLoading, data, isError, error, refetch } = useLoadedPdfs();
-  console.log('[ChatScreen] data:', data)
+const postQueryOnPdf = (query) => axios.post("/query", query).then(extractData);
 
+const ChatScreen = () => {
   const [question, setQuestion] = useState('');
   const [questionAndAnswers, setQuestionAndAnswers] = useState([{
     key: 1,
@@ -31,8 +32,29 @@ const ChatScreen = () => {
    * }
    */
 
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(postQueryOnPdf, {
+    onSuccess: data => {
+      console.log(data);
+
+      setQuestionAndAnswers(existingQAndA => [...existingQAndA, {
+        key: existingQAndA.length + 1,
+        question,
+        answer: data.Response,
+      }]);
+    },
+    onError: () => {
+      throw new Error("There was an error");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries('query-on-pdf')
+    }
+  })
+
   const handleQuestion = useCallback(async () => {
     console.log('[handleQuestion] question:', question)
+    mutate({ question });
   }, [question]);
 
   return (
@@ -58,7 +80,10 @@ const ChatScreen = () => {
         )) : null}
       </div>
       <div className="question-input">
-        <QuestionInput handleQuestion={handleQuestion} />
+        <QuestionInput
+          setQuestion={setQuestion}
+          handleQuestion={handleQuestion}
+        />
       </div>
     </div>
   );
