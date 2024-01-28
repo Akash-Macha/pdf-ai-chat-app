@@ -1,5 +1,5 @@
 import Header from "./Header/Header";
-import Login from "./Login";
+import Login from "./LoginScreen/Login";
 
 const LandingPage = () => {
   return (

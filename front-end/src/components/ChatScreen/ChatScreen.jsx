@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Button, Card, CardContent, TextField, Typography } from "@mui/material";
 import './ChatScreen.css';
 import { useComments } from "../../hooks/use-query-pdf";
 
@@ -42,6 +42,29 @@ const ChatScreen = () => {
       )) : null}
       <input type="text" value={question} onChange={(event) => setQuestion(event.target.value)} />
       <button type="button" onClick={handleQuestion}>Enter</button>
+      <TextField
+        id="Question"
+        label="Question"
+        variant="filled"
+        fullWidth
+        value={question}
+        onChange={(event) => setQuestion(event.target.value)}
+      />
+      <TextField
+        id="filled-multiline-flexible"
+        label="Multiline"
+        multiline
+        maxRows={4}
+        variant="filled"
+        fullWidth
+      />
+      <Button
+        variant="contained"
+        size="large"
+        onClick={handleQuestion}
+      >
+        Enter
+      </Button>
     </>
   );
 };
