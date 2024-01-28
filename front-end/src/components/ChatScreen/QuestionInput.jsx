@@ -16,7 +16,7 @@ const paperStyles = {
   padding: '10px',
 };
 
-const QuestionInput = ({ handleQuestion }) => {
+const QuestionInput = ({ question, setQuestion, handleQuestion }) => {
   return (
     <Paper elevation={3} style={paperStyles}>
       <Grid container spacing={2}>
@@ -27,13 +27,15 @@ const QuestionInput = ({ handleQuestion }) => {
             variant="standard"
             fullWidth
             style={questionInputStyles}
+            value={question}
+            onChange={(event) => setQuestion(event.target.value)}
           />
         </Grid>
         <Grid item xs={2} style={buttonStyles}>
           <Button
             variant="contained"
             size="large"
-            onClick={handleQuestion}
+            onClick={() => handleQuestion(question)}
             fullWidth
             endIcon={<SendIcon />}
           >
