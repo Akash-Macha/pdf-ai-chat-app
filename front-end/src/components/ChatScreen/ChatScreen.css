@@ -1,3 +1,23 @@
-.qAndACard {
-    text-align: left;
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.4fr 2.5fr 0.3fr;
+    gap: 20px 20px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "Chat-Screen-Heading"
+        "Question-And-Answer-Display-Area"
+        "Question-Input-Area";
+}
+
+.Question-Input-Area {
+    grid-area: Question-Input-Area;
+}
+
+.Chat-Screen-Heading {
+    grid-area: Chat-Screen-Heading;
+}
+
+.Question-And-Answer-Display-Area {
+    grid-area: Question-And-Answer-Display-Area;
 }

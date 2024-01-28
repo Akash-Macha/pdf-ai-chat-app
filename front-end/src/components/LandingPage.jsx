@@ -1,5 +1,5 @@
 import Header from "./Header/Header";
-import Login from "./Login";
+import Login from "./LoginScreen/Login";
 
 const LandingPage = () => {
   return (
@@ -7,7 +7,8 @@ const LandingPage = () => {
       <Header />
       <Login />
       <p className="read-the-docs">
-        Made with love ❤️ by Akash Macha
+        Made with love ♥ by Akash Macha
+        {/* Made with love 💓 by Akash Macha */}
       </p>
     </>
   )

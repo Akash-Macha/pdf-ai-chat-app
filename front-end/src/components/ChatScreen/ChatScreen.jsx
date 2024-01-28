@@ -1,10 +1,20 @@
 import { useCallback, useState } from "react";
 import { Card, CardContent, Typography } from "@mui/material";
-import './ChatScreen.css';
-import { useComments } from "../../hooks/use-query-pdf";
+import Divider from '@mui/material/Divider';
+import QuestionInput from "./QuestionInput";
+import "./ChatScreen.css";
+import { useLoadedPdfs } from "../../hooks/use-loaded-pdfs";
+
+const parentQAndACardStyles = {
+  textAlign: 'left',
+  minHeight: '63vh',
+  backgroundColor: "#ededed",
+};
 
 const ChatScreen = () => {
-  const { isLoading, data, isError, error, refetch } = useComments();
+  const { isLoading, data, isError, error, refetch } = useLoadedPdfs();
+  console.log('[ChatScreen] data:', data)
+
   const [question, setQuestion] = useState('');
   const [questionAndAnswers, setQuestionAndAnswers] = useState([{
     key: 1,
@@ -26,23 +36,31 @@ const ChatScreen = () => {
   }, [question]);
 
   return (
-    <>
-      <h3>Chat Screen:</h3>
-      {questionAndAnswers.length !== 0 ? questionAndAnswers.map(questionAndAnswer => (
-        <Card variant="outlined" className="qAndACard" key={questionAndAnswer.key}>
-          <CardContent>
-            <Typography variant="subtitle2">
-              Question: {questionAndAnswer.question}
-            </Typography>
-            <Typography variant="subtitle2">
-              Answer: {questionAndAnswer.answer}
-            </Typography>
-          </CardContent>
-        </Card>
-      )) : null}
-      <input type="text" value={question} onChange={(event) => setQuestion(event.target.value)} />
-      <button type="button" onClick={handleQuestion}>Enter</button>
-    </>
+    <div className="container">
+      <div className="chat-screen-heading">
+        <Typography variant="h4" gutterBottom>
+          Chat with APTRA Advance NDC Superviser Guide
+        </Typography>
+      </div>
+      <div className="question-and-answer-display">
+        {questionAndAnswers.length !== 0 ? questionAndAnswers.map(questionAndAnswer => (
+          <Card variant="outlined" key={questionAndAnswer.key} style={parentQAndACardStyles}>
+            <CardContent>
+              <Typography variant="subtitle2">
+                Question: {questionAndAnswer.question}
+              </Typography>
+              <Typography variant="subtitle2">
+                Answer: {questionAndAnswer.answer}
+              </Typography>
+              <Divider />
+            </CardContent>
+          </Card>
+        )) : null}
+      </div>
+      <div className="question-input">
+        <QuestionInput handleQuestion={handleQuestion} />
+      </div>
+    </div>
   );
 };
 

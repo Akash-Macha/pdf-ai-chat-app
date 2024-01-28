@@ -1,8 +1,9 @@
 import { Suspense, lazy } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { RingLoader } from 'react-spinners';
 import './App.css'
+import NotFound from './components/NotFound/NotFound';
+import Loader from './components/Loader/Loader';
 const LandingPage = lazy(() => import('./components/LandingPage'))
 const ChatScreen = lazy(() => import('./components/ChatScreen/ChatScreen'))
 
@@ -17,13 +18,13 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Suspense fallback={<RingLoader color="#36d7b7" />}><LandingPage /></Suspense>,
-    errorElement: <p>Not Found</p>,
+    element: <Suspense fallback={<Loader color="#36d7b7" />}><LandingPage /></Suspense>,
+    errorElement: <NotFound />,
   },
   {
     path: "/chat-with-pdf",
-    element: <Suspense fallback={<RingLoader color="#36d7b7" />}><ChatScreen /></Suspense>,
-    errorElement: <p>Not Found</p>,
+    element: <Suspense fallback={<Loader color="#36d7b7" />}><ChatScreen /></Suspense>,
+    errorElement: <NotFound />,
   }
 ]);
 

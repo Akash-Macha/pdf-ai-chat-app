@@ -1,0 +1,1 @@
+export const extractData = (response) => response.data;
