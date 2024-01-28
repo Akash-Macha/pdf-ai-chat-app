@@ -1,7 +1,14 @@
 import { useCallback, useState } from "react";
 import { Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import Divider from '@mui/material/Divider';
 import './ChatScreen.css';
 import { useComments } from "../../hooks/use-query-pdf";
+
+const cardStyles = {
+  textAlign: 'left',
+  minHeight: '50vh',
+  backgroundColor: "#ededed",
+};
 
 const ChatScreen = () => {
   const { isLoading, data, isError, error, refetch } = useComments();
@@ -27,9 +34,11 @@ const ChatScreen = () => {
 
   return (
     <>
-      <h3>Chat Screen:</h3>
+      <Typography variant="h4" gutterBottom>
+        Chat with APTRA Advance NDC Superviser Guide
+      </Typography>
       {questionAndAnswers.length !== 0 ? questionAndAnswers.map(questionAndAnswer => (
-        <Card variant="outlined" className="qAndACard" key={questionAndAnswer.key}>
+        <Card variant="outlined" key={questionAndAnswer.key} style={cardStyles}>
           <CardContent>
             <Typography variant="subtitle2">
               Question: {questionAndAnswer.question}
@@ -37,6 +46,7 @@ const ChatScreen = () => {
             <Typography variant="subtitle2">
               Answer: {questionAndAnswer.answer}
             </Typography>
+            <Divider />
           </CardContent>
         </Card>
       )) : null}

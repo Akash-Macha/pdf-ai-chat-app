@@ -14,6 +14,10 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
+# Packages:
+- MUI Library
+- [React Spinners]https://www.davidhu.io/react-spinners/)
+
 # MUI Components used:
 - [Text Field](https://mui.com/material-ui/react-text-field/)
 - [Button](https://mui.com/material-ui/react-button/)
