@@ -15,7 +15,8 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "*"
+    "*",
+    "https://pdf-ai-chat-app.netlify.app",
 ]
 
 app.add_middleware(
