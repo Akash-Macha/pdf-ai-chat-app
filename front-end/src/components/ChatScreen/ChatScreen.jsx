@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 import Divider from '@mui/material/Divider';
-import { useComments } from "../../hooks/use-query-pdf";
 import QuestionInput from "./QuestionInput";
 import "./ChatScreen.css";
+import { useLoadedPdfs } from "../../hooks/use-loaded-pdfs";
 
 const parentQAndACardStyles = {
   textAlign: 'left',
@@ -12,7 +12,9 @@ const parentQAndACardStyles = {
 };
 
 const ChatScreen = () => {
-  const { isLoading, data, isError, error, refetch } = useComments();
+  const { isLoading, data, isError, error, refetch } = useLoadedPdfs();
+  console.log('[ChatScreen] data:', data)
+
   const [question, setQuestion] = useState('');
   const [questionAndAnswers, setQuestionAndAnswers] = useState([{
     key: 1,
