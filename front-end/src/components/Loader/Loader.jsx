@@ -5,10 +5,18 @@ const loaderStyles = {
   margin: "auto",
 };
 
+const loaders =  {
+  "RingLoader": RingLoader,
+}
+
 const Loader = ({
-  color = "#36d7b7"
+  type = "RingLoader",
+  color = "#36d7b7",
+  size = 50,
+  cssOverride,
 }) => {
-  return <RingLoader color={color} cssOverride={loaderStyles} />
+  const Loader = loaders[type];
+  return <Loader color={color} size={size} cssOverride={{...loaderStyles, ...cssOverride }} />
 } 
 
 export default Loader;
