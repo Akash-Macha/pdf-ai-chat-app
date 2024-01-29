@@ -16,7 +16,7 @@ Currently, two official plugins are available:
 
 # Packages:
 - MUI Library
-- [React Spinners]https://www.davidhu.io/react-spinners/)
+- [React Spinners](https://www.davidhu.io/react-spinners)
 
 # MUI Components used:
 - [Text Field](https://mui.com/material-ui/react-text-field/)

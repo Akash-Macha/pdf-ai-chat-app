@@ -16,7 +16,13 @@ const paperStyles = {
   padding: '10px',
 };
 
-const QuestionInput = ({ question, setQuestion, handleQuestion }) => {
+const handleOnQuestionEnter = (event) => {
+  if (event.key === "Enter") {
+    document.getElementById("enter-button")?.click();
+  }
+}
+
+const QuestionInput = ({ question, setQuestion, handleQuestion, isLoading }) => {
   return (
     <Paper elevation={3} style={paperStyles}>
       <Grid container spacing={2}>
@@ -29,15 +35,19 @@ const QuestionInput = ({ question, setQuestion, handleQuestion }) => {
             style={questionInputStyles}
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
+            onKeyDown={handleOnQuestionEnter}
+            disabled={isLoading}
           />
         </Grid>
         <Grid item xs={2} style={buttonStyles}>
           <Button
-            variant="contained"
+            id="enter-button"
+            variant="outlined"
             size="large"
             onClick={() => handleQuestion(question)}
             fullWidth
             endIcon={<SendIcon />}
+            disabled={isLoading}
           >
             Enter
           </Button>

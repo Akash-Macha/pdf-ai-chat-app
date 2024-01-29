@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent, Paper, Typography } from "@mui/material";
-import QuestionInput from "./QuestionInput";
-import "./ChatScreen.css";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "../../axios-api";
-import { extractData } from '../../utils'
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import QuestionInput from "./QuestionInput";
+import Loader from "../Loader/Loader";
+import { extractData } from '../../utils'
+import "./ChatScreen.css";
 
 const parentQAndACardStyles = {
   textAlign: 'left',
@@ -24,7 +25,7 @@ const ChatScreen = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(postQueryOnPdf, {
+  const { mutate, isLoading } = useMutation(postQueryOnPdf, {
     onSuccess: data => {
       console.log(data);
 
@@ -80,11 +81,18 @@ const ChatScreen = () => {
           )) : <Typography variant="subtitle1">It's empty here... Please start asking questions.</Typography>}
           <div style={{ float: "left", clear: "both" }} ref={containerEndRef}></div>
         </Card>
+        {isLoading ? <Loader type="RingLoader" size={85}  cssOverride={{
+          display: 'block',
+          position: 'absolute',
+          left: "45%",
+          top: "40%",
+        }} /> : null}
       </div>
       <div className="question-input">
         <QuestionInput
           question={question}
           setQuestion={setQuestion}
+          isLoading={isLoading}
           handleQuestion={handleQuestion}
         />
       </div>
