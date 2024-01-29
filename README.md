@@ -7,3 +7,5 @@
 - Frontend
     - React
     - Vite
+    - MUI
+    - React Spinners
