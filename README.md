@@ -1,5 +1,6 @@
 # AI powered PDF Chat App
-The user can can upload a PDF and ask queries on it. This app uses the gpt-3.5-turbo model to answer the user queries.
+This is an AI Chatbot which will give answers to the user questions or key words based on PDF uploaded by user.
+This app uses the gpt-3.5-turbo model to answer the user queries.
 
 ## Tech Stack:
 - Backend
