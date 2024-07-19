@@ -97,6 +97,7 @@ const ChatScreen = () => {
             setQuestion={setQuestion}
             isLoading={isLoading}
             handleQuestion={handleQuestion}
+            disabled={!question}
           />
         </div>
         <span className="footer">

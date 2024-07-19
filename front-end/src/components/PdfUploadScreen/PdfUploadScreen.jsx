@@ -57,7 +57,7 @@ const PdfUploadScreen = () => {
             left: "45%",
             top: "40%",
           }} />
-          <p style={{ color: 'white' }}>Sit and realx as we upload your PDF :)</p>
+          <p style={{ color: 'white' }}>Sit and realx while we upload your PDF.</p>
           </>
           ) : null}
     </div>
