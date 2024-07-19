@@ -58,7 +58,7 @@ def query(question: Question):
 async def upload_pdf(file_upload: UploadFile):
     # Save the file in the backend server
     pdf_file = await file_upload.read()
-    save_to_file_name = 'UPLOADED_PDF_FILE'
+    save_to_file_name = 'UPLOADED_PDF_FILE.pdf'
     with open(save_to_file_name, "wb") as file:
         file.write(pdf_file)
     
@@ -80,16 +80,16 @@ async def upload_pdf(file_upload: UploadFile):
         chunks = text_splitter.split_text(text=pdfText)
 
         # embeddings
-        pdf_name = pdf.name[:-4] # get the name of the pdf, with .pdf
-        store_name = f"{save_to_file_name}.pkl"
+        store_name = "UPLOADED_PDF_FILE.pkl"
 
-        if os.path.exists(store_name):
+        try:
             embeddings = OpenAIEmbeddings()
             VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
             with open(store_name, 'wb') as f:
                 pickle.dump(VectorStore, f)
-        else:
-            print('Error, unable to upload the file.')
+        except Exception:
+            print("Unable to upload the PDF")
+
 
     return {"Response": "Success"}
 
