@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <span className="read-the-docs">
+    <span>
       Made with love ♥ by Atleos Wingers.
       {/* Made with love 💓 by Akash Macha */}
     </span>
