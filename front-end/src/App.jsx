@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import './App.css'
 import NotFound from './components/NotFound/NotFound';
 import Loader from './components/Loader/Loader';
+import PdfUploadScreen from './components/PdfUploadScreen/PdfUploadScreen';
 const LandingPage = lazy(() => import('./components/LandingPage'))
 const ChatScreen = lazy(() => import('./components/ChatScreen/ChatScreen'))
 
@@ -19,6 +20,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Suspense fallback={<Loader color="#36d7b7" />}><LandingPage /></Suspense>,
+    errorElement: <NotFound />,
+  },
+  {
+    path: "/pdf-upload",
+    element: <Suspense fallback={<Loader color="#36d7b7" />}><PdfUploadScreen /></Suspense>,
     errorElement: <NotFound />,
   },
   {

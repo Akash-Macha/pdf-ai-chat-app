@@ -99,7 +99,7 @@ const ChatScreen = () => {
             handleQuestion={handleQuestion}
           />
         </div>
-        <span class="footer">
+        <span className="footer">
           <Footer />
         </span>
       </div>

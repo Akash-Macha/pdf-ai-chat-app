@@ -25,7 +25,7 @@ const Login = () => {
 
     if (email === 'test@test.com' && password === 'test') {
       setError(null);
-      navigate("/chat-with-pdf");
+      navigate("/pdf-upload");
 
       console.log("Authenticated and navigating!");
     } else {
