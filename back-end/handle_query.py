@@ -7,7 +7,7 @@ from langchain.callbacks import get_openai_callback
 OPEN_AI_MODEL = 'gpt-3.5-turbo'
 
 # Load Embedding from Disk
-def load_embedding(store_name='APTRA Advance NDC_superviser_Guide.pkl'):
+def load_embedding(store_name='UPLOADED_PDF_FILE.pkl'):
   if os.path.exists(store_name):
     with open(store_name, 'rb') as file:
       VectorStore = pickle.load(file)
