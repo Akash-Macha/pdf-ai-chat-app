@@ -59,7 +59,7 @@ const ChatScreen = () => {
       <div className="container">
         <div className="chat-screen-heading">
           <Typography variant="h4">
-            Chat with APTRA Advance NDC Superviser Guide
+            Chat with your PDF
           </Typography>
         </div>
         <div className="question-and-answer-display">

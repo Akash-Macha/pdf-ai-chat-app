@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 
 const paperStyle = { padding: 20, minHeight: '30vh', width: 350, margin: "40px auto" }
-const submitButtonStyle = { margin: '20px 0' }
+const submitButtonStyle = { margin: '20px 0', backgroundColor: '#D1E0D7', color: 'black', }
 const textFieldStyle = {
   margin: '10px 0',
 };

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import Loader from "../Loader/Loader";
 
 const PdfUploadScreen = () => {
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleFileInputChange = (event) => {
@@ -18,8 +21,9 @@ const PdfUploadScreen = () => {
     // 'file_upload' should match with the API endpoint variable name!
     formData.append('file_upload', file);
 
+    setIsLoading(true);
     try {
-      const endpoint = 'http://localhost:8000/upload-pdf';
+      const endpoint = 'https://pdf-ai-chat-app-backend.onrender.com/upload-pdf';
       const response = await fetch(endpoint, {
         method: 'POST',
         body: formData
@@ -35,6 +39,7 @@ const PdfUploadScreen = () => {
     } catch (error) {
       console.error('Error uploading file:', error);
     }
+    setIsLoading(false);
   } 
 
   return (
@@ -43,9 +48,18 @@ const PdfUploadScreen = () => {
 
       <form onSubmit={handleSubmit}>
         <input type="file" accept=".pdf" onChange={handleFileInputChange}/>
-        <button type="submit">Upload</button>
+        <button type="submit" disabled={!file}>Upload</button>
       </form>
       { file && <p>{file.name}</p>}
+      {isLoading ? (<><Loader type="RingLoader" size={85} cssOverride={{
+            display: 'block',
+            position: 'absolute',
+            left: "45%",
+            top: "40%",
+          }} />
+          <p style={{ color: 'white' }}>Sit and realx as we upload your PDF :)</p>
+          </>
+          ) : null}
     </div>
   );
 }
