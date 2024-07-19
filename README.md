@@ -1,4 +1,5 @@
-# PDF AI Chat App
+# AI powered PDF Chat App
+The user can can upload a PDF and ask queries on it. This app uses the gpt-3.5-turbo model to answer the user queries.
 
 ## Tech Stack:
 - Backend
@@ -8,4 +9,5 @@
     - React
     - Vite
     - MUI
-    - React Spinners
+
+Publicly accessible URL: [https://pdf-ai-chat-app.netlify.app/pdf-upload](https://pdf-ai-chat-app.netlify.app/pdf-upload)
