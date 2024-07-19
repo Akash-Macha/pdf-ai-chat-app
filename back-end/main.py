@@ -84,14 +84,12 @@ async def upload_pdf(file_upload: UploadFile):
         store_name = f"{save_to_file_name}.pkl"
 
         if os.path.exists(store_name):
-            with open(store_name, 'rb') as f:
-                VectorStore = pickle.load(f)
-            print("Embeddings loaded from the Disk")
-        else:
             embeddings = OpenAIEmbeddings()
             VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
             with open(store_name, 'wb') as f:
                 pickle.dump(VectorStore, f)
+        else:
+            print('Error, unable to upload the file.')
 
     return {"Response": "Success"}
 
