@@ -26,3 +26,7 @@
 .Footer {
     grid-area: Footer;
 }
+
+.css-aqpgxn-MuiFormLabel-root-MuiInputLabel-root {
+    font-weight: bold !important;
+}
