@@ -58,12 +58,12 @@ def query(question: Question):
 async def upload_pdf(file_upload: UploadFile):
     # Save the file in the backend server
     pdf_file = await file_upload.read()
-    save_to = file_upload.filename
-    with open(save_to, "wb") as file:
+    save_to_file_name = 'UPLOADED_PDF_FILE'
+    with open(save_to_file_name, "wb") as file:
         file.write(pdf_file)
     
     # Read the PDF text and generate pkl file
-    with open(save_to, "rb") as pdf:
+    with open(save_to_file_name, "rb") as pdf:
         pdf_reader = PdfReader(pdf)
 
         # Read one page at a time from PDF
@@ -81,7 +81,7 @@ async def upload_pdf(file_upload: UploadFile):
 
         # embeddings
         pdf_name = pdf.name[:-4] # get the name of the pdf, with .pdf
-        store_name = f"{pdf_name}-{str(datetime.now())}.pkl"
+        store_name = f"{save_to_file_name}.pkl"
 
         if os.path.exists(store_name):
             with open(store_name, 'rb') as f:
