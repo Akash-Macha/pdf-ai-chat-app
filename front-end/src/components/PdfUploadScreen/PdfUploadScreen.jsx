@@ -43,6 +43,7 @@ const PdfUploadScreen = () => {
   } 
 
   return (
+    <>
     <div>
       <h1>Upload PDF</h1>
 
@@ -50,7 +51,7 @@ const PdfUploadScreen = () => {
         <input type="file" accept=".pdf" onChange={handleFileInputChange}/>
         <button type="submit" disabled={!file}>Upload</button>
       </form>
-      { file && <p>{file.name}</p>}
+      {/* { file && <p>{file.name}</p>} */}
       {isLoading ? (<><Loader type="RingLoader" size={85} cssOverride={{
             display: 'block',
             position: 'absolute',
@@ -61,6 +62,12 @@ const PdfUploadScreen = () => {
           </>
           ) : null}
     </div>
+    <div style={{
+      paddingTop: 450,
+    }}>
+      This is a prototype. So please do not upload any confidential PDFs, as we use the Open AI's gpt-3.5-turbo Model.
+    </div>
+    </>
   );
 }
 
