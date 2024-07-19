@@ -8,6 +8,20 @@ OPEN_AI_MODEL = 'gpt-3.5-turbo'
 
 # Load Embedding from Disk
 def load_embedding(store_name='UPLOADED_PDF_FILE.pkl'):
+  # ---------
+  print('Logging: ')
+  # Get the current working directory
+  current_directory = os.getcwd()
+
+  # Get a list of all files and directories in the current directory
+  file_names = os.listdir(current_directory)
+
+  # Print the file names
+  print("Files in the current directory:")
+  for file_name in file_names:
+    print(file_name)
+  # -------
+  
   if os.path.exists(store_name):
     with open(store_name, 'rb') as file:
       VectorStore = pickle.load(file)
