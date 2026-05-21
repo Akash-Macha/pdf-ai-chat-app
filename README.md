@@ -11,4 +11,4 @@ This app uses the gpt-3.5-turbo model to answer the user queries.
     - Vite
     - MUI
 
-Publicly accessible URL: [https://pdf-ai-chat-app.netlify.app/pdf-upload](https://pdf-ai-chat-app.netlify.app)
+Publicly accessible URL: [https://pdf-ai-chat-app.netlify.app](https://pdf-ai-chat-app.netlify.app)
