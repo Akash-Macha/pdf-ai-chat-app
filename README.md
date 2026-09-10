@@ -93,21 +93,23 @@ The frontend runs by default at:
 http://localhost:5173
 ```
 
-> Note: the frontend now points to the local backend by default in `front-end/src/axios-api.js`.
+> Note: the frontend uses a Vite environment variable for the backend URL. The default is `http://localhost:8000` for local development.
 >
-> To switch back to the deployed backend, comment out the local URL and uncomment the deployed backend URL in that file.
+> To use the deployed backend instead, set `VITE_API_BASE_URL=https://pdf-ai-chat-app-backend.onrender.com` in a `.env` file or your deployment environment.
 >
-> Example:
+> Example `.env` file:
 >
-> ```js
-> const instance = axios.create({
->   baseURL: 'http://localhost:8000',
->   // baseURL: 'https://pdf-ai-chat-app-backend.onrender.com',
->   'Content-Type': 'application/json'
-> });
+> ```env
+> VITE_API_BASE_URL=http://localhost:8000
 > ```
 >
-> To use the deployed URL instead, replace the local line with the commented deployed URL and comment the local line again.
+> For production, use:
+>
+> ```env
+> VITE_API_BASE_URL=https://pdf-ai-chat-app-backend.onrender.com
+> ```
+>
+> This keeps the same codebase working in both local and deployed environments without changing the source file each time.
 
 ## Frontend Implementation Brief
 
