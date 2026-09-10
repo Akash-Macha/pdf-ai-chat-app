@@ -7,6 +7,7 @@ const PdfUploadScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
   const handleFileInputChange = (event) => {
     console.log('event.target:', event.target.files)
@@ -23,7 +24,7 @@ const PdfUploadScreen = () => {
 
     setIsLoading(true);
     try {
-      const endpoint = 'https://pdf-ai-chat-app-backend.onrender.com/upload-pdf';
+      const endpoint = `${apiBaseUrl}/upload-pdf`;
       const response = await fetch(endpoint, {
         method: 'POST',
         body: formData
