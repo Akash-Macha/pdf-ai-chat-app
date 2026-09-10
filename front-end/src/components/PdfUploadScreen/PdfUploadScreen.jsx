@@ -65,7 +65,7 @@ const PdfUploadScreen = () => {
     <div style={{
       paddingTop: 450,
     }}>
-      This is a prototype. So please do not upload any confidential PDFs, as we use the Open AI's gpt-3.5-turbo Model.
+      Please do not upload any confidential PDFs, as we use OpenAI's gpt-3.5-turbo model rather than a local one.
     </div>
     </>
   );

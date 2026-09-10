@@ -6,7 +6,7 @@ const Header = () => {
       <Typography variant='h2' gutterBottom style={{
         fontFamily: 'Sora',
       }}>
-        Welcome to Atleos DocBot
+        Chat with your PDFs
       </Typography>
     </>
   );
