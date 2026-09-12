@@ -2,6 +2,12 @@
 
 This project is a PDF-based Q&A application that lets users upload a PDF document and ask questions about its content. The backend processes the uploaded document, splits it into manageable text chunks, creates vector embeddings, and uses OpenAI's GPT-3.5-turbo model to answer questions based on the document context. The frontend provides a simple upload flow and chat interface for interacting with the uploaded PDF.
 
+## Project URL
+
+Publicly accessible URL:
+
+[https://pdf-ai-chat-app.netlify.app](https://pdf-ai-chat-app.netlify.app)
+
 ## Tech Stack
 
 ### Frontend
@@ -136,10 +142,4 @@ The backend is built with FastAPI and is responsible for the document processing
 - The `/loaded-pdfs` endpoint lists the PDFs that have already been processed and stored locally.
 
 This architecture is a lightweight retrieval-augmented generation (RAG) setup: the app retrieves relevant PDF content before asking the LLM to answer questions.
-
-## Project URL
-
-Publicly accessible frontend URL:
-
-[https://pdf-ai-chat-app.netlify.app](https://pdf-ai-chat-app.netlify.app)
 
