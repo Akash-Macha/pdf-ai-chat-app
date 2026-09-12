@@ -1,10 +1,11 @@
+import { Text } from '@mantine/core';
+
 const Footer = () => {
   return (
-    <span>
-      {/* Made with love ♥ by Atleos Wingers. */}
+    <Text ta="center" size="sm" c="dimmed" py="md">
       Made with love 💓 by Akash Macha
-    </span>
+    </Text>
   );
-}
+};
 
 export default Footer;

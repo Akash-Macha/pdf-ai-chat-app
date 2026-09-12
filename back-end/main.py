@@ -1,8 +1,9 @@
 import os
-from fastapi import FastAPI, File, UploadFile
+from fastapi import Depends, FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from auth import LoginRequest, authenticate, get_current_user
 from handle_query import handle_query, VECTORSTORE_DIR
 
 from datetime import datetime
@@ -36,8 +37,13 @@ app.add_middleware(
 
 # APIs
 
+@app.post('/login')
+def login(request: LoginRequest):
+    token = authenticate(request.email, request.password)
+    return {"token": token}
+
 @app.get('/loaded-pdfs')
-def get_loaded_pdfs():
+def get_loaded_pdfs(user: str = Depends(get_current_user)):
     is_loaded = os.path.isdir(VECTORSTORE_DIR)
 
     return {
@@ -46,7 +52,7 @@ def get_loaded_pdfs():
     }
 
 @app.post('/query')
-def query(question: Question):
+def query(question: Question, user: str = Depends(get_current_user)):
     print("[query]: " + question.question)
     response = handle_query(question.question)
     if response is None:
@@ -56,7 +62,7 @@ def query(question: Question):
 
 
 @app.post('/upload-pdf')
-async def upload_pdf(file_upload: UploadFile):
+async def upload_pdf(file_upload: UploadFile, user: str = Depends(get_current_user)):
     # Save the file in the backend server
     pdf_file = await file_upload.read()
     save_to_file_name = 'UPLOADED_PDF_FILE.pdf'

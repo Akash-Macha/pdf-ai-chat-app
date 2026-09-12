@@ -1,80 +1,84 @@
-import { useCallback, useState } from 'react';
-import { Button, Grid, Paper, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
-
-const paperStyle = { padding: 20, minHeight: '30vh', width: 350, margin: "40px auto" }
-const submitButtonStyle = { margin: '20px 0', backgroundColor: '#D1E0D7', color: 'black', }
-const textFieldStyle = {
-  margin: '10px 0',
-};
-const headingStyle = {
-  margin: '0 0 10px 0',
-}
+import { Alert, Button, Center, Paper, PasswordInput, Stack, Text, TextInput, Title } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconLogin2 } from '@tabler/icons-react';
+import axios from '../../axios-api';
+import { setToken } from '../../auth';
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const validate = useCallback(() => {
-    console.log('[validate] email = ', email);
-    console.log('[validate] password = ', password);
+  const form = useForm({
+    initialValues: { email: '', password: '' },
+    validate: {
+      email: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Enter a valid email'),
+      password: (value) => (value.length > 0 ? null : 'Password is required'),
+    },
+  });
 
-    if (email === 'test@test.com' && password === 'test') {
-      setError(null);
-      navigate("/pdf-upload");
-
-      console.log("Authenticated and navigating!");
-    } else {
-      setError('Please enter correct credentials.');
+  const handleSubmit = async (values) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const response = await axios.post('/login', values);
+      setToken(response.data.token);
+      navigate('/pdf-upload');
+    } catch (err) {
+      if (err.response?.status === 401) {
+        setError('Incorrect email or password.');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
-  }, [email, password]);
+    setIsLoading(false);
+  };
 
   return (
-    <Grid>
-      <Paper elevation={15} style={paperStyle}>
-        <Grid align='center'>
-          <LoginRoundedIcon color='primary' />
-          <Typography variant='h5'>
-            Login
-          </Typography>
-        </Grid>
-        <TextField
-          label='Email'
-          variant="standard"
-          placeholder='Enter email'
-          fullWidth
-          required
-          style={textFieldStyle}
-          error={!!error}
-          onChange={(event) => setEmail(event.target.value)}
-        />
-        <TextField
-          label='Password'
-          variant="standard"
-          placeholder='Enter password'
-          type='password'
-          fullWidth
-          required
-          style={textFieldStyle}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <Button
-          type='button'
-          color='primary'
-          variant="contained"
-          style={submitButtonStyle}
-          fullWidth
-          onClick={validate}
-        >
-          Sign in
-        </Button>
+    <Center style={{ flex: 1 }}>
+      <Paper withBorder shadow="md" p="xl" radius="md" w={380}>
+        <Stack gap="md">
+          <Stack gap={4} align="center">
+            <IconLogin2 size={32} stroke={1.5} />
+            <Title order={2} size="h3">
+              Welcome back
+            </Title>
+            <Text size="sm" c="dimmed">
+              Sign in to chat with your PDFs
+            </Text>
+          </Stack>
+
+          {error && (
+            <Alert color="red" variant="light" icon={<IconAlertCircle size={18} />}>
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="sm">
+              <TextInput
+                label="Email"
+                placeholder="you@example.com"
+                required
+                {...form.getInputProps('email')}
+              />
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                required
+                {...form.getInputProps('password')}
+              />
+              <Button type="submit" fullWidth mt="sm" loading={isLoading}>
+                Sign in
+              </Button>
+            </Stack>
+          </form>
+        </Stack>
       </Paper>
-    </Grid>
-  )
-}
+    </Center>
+  );
+};
 
 export default Login;

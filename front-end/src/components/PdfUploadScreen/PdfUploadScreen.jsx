@@ -1,75 +1,94 @@
-import { useState } from "react";
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Loader from "../Loader/Loader";
+import { Button, Center, Group, Paper, Stack, Text, Title, rem } from '@mantine/core';
+import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone';
+import { notifications } from '@mantine/notifications';
+import { IconFileTypePdf, IconUpload, IconX } from '@tabler/icons-react';
+import axios from '../../axios-api';
 
 const PdfUploadScreen = () => {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-  const handleFileInputChange = (event) => {
-    console.log('event.target:', event.target.files)
-    setFile(event.target.files[0]);
-  }
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log('file:', file);
+  const handleDrop = (files) => {
+    setFile(files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
 
     const formData = new FormData();
-
-    // 'file_upload' should match with the API endpoint variable name!
+    // 'file_upload' must match the API endpoint's parameter name
     formData.append('file_upload', file);
 
     setIsLoading(true);
     try {
-      const endpoint = `${apiBaseUrl}/upload-pdf`;
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData
+      await axios.post('/upload-pdf', formData);
+      notifications.show({
+        title: 'Upload complete',
+        message: `${file.name} is ready to chat with.`,
+        color: 'teal',
       });
-
-      if (response.ok) {
-        console.log('file have successfully uploaded.');
-        navigate("/chat-with-pdf");
-      } else {
-        console.log('file upload failed.');
-      }
-
+      navigate('/chat-with-pdf');
     } catch (error) {
-      console.error('Error uploading file:', error);
+      notifications.show({
+        title: 'Upload failed',
+        message: error.response?.data?.Error || 'Something went wrong while uploading your PDF.',
+        color: 'red',
+      });
     }
     setIsLoading(false);
-  } 
+  };
 
   return (
-    <>
-    <div>
-      <h1>Upload PDF</h1>
+    <Center style={{ flex: 1 }}>
+      <Stack gap="lg" w={520}>
+        <Stack gap={4} align="center">
+          <Title order={2} size="h3">
+            Upload a PDF
+          </Title>
+          <Text size="sm" c="dimmed" ta="center">
+            Please don&apos;t upload confidential PDFs — questions are answered using OpenAI&apos;s gpt-3.5-turbo.
+          </Text>
+        </Stack>
 
-      <form onSubmit={handleSubmit}>
-        <input type="file" accept=".pdf" onChange={handleFileInputChange}/>
-        <button type="submit" disabled={!file}>Upload</button>
-      </form>
-      {/* { file && <p>{file.name}</p>} */}
-      {isLoading ? (<><Loader type="RingLoader" size={85} cssOverride={{
-            display: 'block',
-            position: 'absolute',
-            left: "45%",
-            top: "40%",
-          }} />
-          <p style={{ color: 'white' }}>Sit and realx while we upload your PDF.</p>
-          </>
-          ) : null}
-    </div>
-    <div style={{
-      paddingTop: 450,
-    }}>
-      Please do not upload any confidential PDFs, as we use OpenAI's gpt-3.5-turbo model rather than a local one.
-    </div>
-    </>
+        <Paper withBorder radius="md" p="md">
+          <Dropzone
+            onDrop={handleDrop}
+            accept={PDF_MIME_TYPE}
+            maxFiles={1}
+            loading={isLoading}
+          >
+            <Group justify="center" gap="xl" mih={180} style={{ pointerEvents: 'none' }}>
+              <Dropzone.Accept>
+                <IconUpload style={{ width: rem(52), height: rem(52) }} stroke={1.5} />
+              </Dropzone.Accept>
+              <Dropzone.Reject>
+                <IconX style={{ width: rem(52), height: rem(52) }} stroke={1.5} />
+              </Dropzone.Reject>
+              <Dropzone.Idle>
+                <IconFileTypePdf style={{ width: rem(52), height: rem(52) }} stroke={1.5} />
+              </Dropzone.Idle>
+
+              <Stack gap={4} align="center">
+                <Text size="lg">
+                  {file ? file.name : 'Drag a PDF here, or click to browse'}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  One PDF at a time
+                </Text>
+              </Stack>
+            </Group>
+          </Dropzone>
+        </Paper>
+
+        <Button onClick={handleUpload} disabled={!file} loading={isLoading} fullWidth size="md">
+          Upload
+        </Button>
+      </Stack>
+    </Center>
   );
-}
+};
 
 export default PdfUploadScreen;
