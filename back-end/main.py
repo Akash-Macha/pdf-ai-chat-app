@@ -3,14 +3,13 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from handle_query import handle_query
+from handle_query import handle_query, VECTORSTORE_DIR
 
 from datetime import datetime
 from PyPDF2 import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
-import pickle
 
 class Question(BaseModel):
     question: str
@@ -39,13 +38,11 @@ app.add_middleware(
 
 @app.get('/loaded-pdfs')
 def get_loaded_pdfs():
-    all_file_names = os.listdir()
-    pickles = [x for x in all_file_names if x[-4:] == '.pkl']
-    loaded_pdf_names = list(map(lambda a: a[:-4], pickles)) # trimming the .pkl from the file name
+    is_loaded = os.path.isdir(VECTORSTORE_DIR)
 
     return {
-        "loaded_pdfs": loaded_pdf_names,
-        "total_count": len(pickles)
+        "loaded_pdfs": ["UPLOADED_PDF_FILE"] if is_loaded else [],
+        "total_count": 1 if is_loaded else 0
     }
 
 @app.post('/query')
@@ -83,14 +80,10 @@ async def upload_pdf(file_upload: UploadFile):
         )
         chunks = text_splitter.split_text(text=pdfText)
 
-        # embeddings
-        store_name = "UPLOADED_PDF_FILE.pkl"
-
         try:
             embeddings = OpenAIEmbeddings()
             VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
-            with open(store_name, 'wb') as f:
-                pickle.dump(VectorStore, f)
+            VectorStore.save_local(VECTORSTORE_DIR)
         except Exception as e:
             print(f"Unable to upload the PDF: {e!r}")
             return {"Response": "Failed", "Error": str(e)}

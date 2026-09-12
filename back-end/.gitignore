@@ -125,6 +125,7 @@ celerybeat.pid
 # Uploaded PDFs and generated embeddings (runtime data, not source)
 *.pkl
 UPLOADED_PDF_FILE.pdf
+UPLOADED_PDF_FILE_INDEX/
 
 # Environments
 .env
