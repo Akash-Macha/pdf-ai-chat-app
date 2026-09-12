@@ -122,6 +122,10 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Uploaded PDFs and generated embeddings (runtime data, not source)
+*.pkl
+UPLOADED_PDF_FILE.pdf
+
 # Environments
 .env
 .venv

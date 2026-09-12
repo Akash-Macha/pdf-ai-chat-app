@@ -52,6 +52,8 @@ def get_loaded_pdfs():
 def query(question: Question):
     print("[query]: " + question.question)
     response = handle_query(question.question)
+    if response is None:
+        return {"Response": "No PDF has been uploaded yet. Please upload a PDF first."}
     print("[query]: " + response)
     return {"Response": response}
 
@@ -89,9 +91,9 @@ async def upload_pdf(file_upload: UploadFile):
             VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
             with open(store_name, 'wb') as f:
                 pickle.dump(VectorStore, f)
-        except Exception:
-            print("Unable to upload the PDF")
-
+        except Exception as e:
+            print(f"Unable to upload the PDF: {e!r}")
+            return {"Response": "Failed", "Error": str(e)}
 
     return {"Response": "Success"}
 
