@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF AI Chat — RAG Pipeline</title>
+  <style>
+    :root {
+      --ink: #ebf2ff;
+      --muted: #a7b4cc;
+      --bg: #0b1020;
+      --panel: rgba(20, 29, 53, .82);
+      --line: rgba(181, 199, 235, .18);
+      --purple: #a78bfa;
+      --cyan: #4fd1e8;
+      --green: #58d68d;
+      --yellow: #f8c660;
+      --pink: #f38bbd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-width: 320px; color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 15% 0%, #203269 0, transparent 31rem), radial-gradient(circle at 100% 40%, #352153 0, transparent 32rem), var(--bg);
+    }
+    main { width: min(1150px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 70px; }
+    .eyebrow { color: var(--cyan); font-size: .76rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { font-size: clamp(2.25rem, 6vw, 4.8rem); letter-spacing: -.06em; line-height: .96; margin: 12px 0 16px; max-width: 800px; }
+    .intro { color: var(--muted); font-size: 1.08rem; line-height: 1.65; max-width: 690px; margin: 0; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 30px 0 42px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; color: var(--muted); font-size: .86rem; }
+    .chip b { color: var(--ink); }
+    .section-label { display: flex; align-items: center; gap: 12px; margin: 34px 0 16px; font-weight: 800; }
+    .section-label span { font-size: .75rem; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+    .section-label::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); align-items: stretch; gap: 12px; }
+    .node {
+      min-height: 214px; position: relative; padding: 22px 19px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.16); transition: transform .2s, border-color .2s;
+    }
+    .node:hover { transform: translateY(-5px); border-color: var(--accent); }
+    .node:not(:last-child)::after { content: "→"; position: absolute; z-index: 2; right: -22px; top: calc(50% - 15px); color: var(--accent); font-size: 26px; font-weight: 800; }
+    .icon { font-size: 1.6rem; margin-bottom: 20px; }
+    .step { color: var(--accent); font-weight: 800; font-size: .75rem; letter-spacing: .09em; }
+    .node h2 { margin: 8px 0 8px; font-size: 1.08rem; letter-spacing: -.02em; }
+    .node p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+    .pdf { --accent: var(--pink); } .split { --accent: var(--yellow); } .embed { --accent: var(--cyan); }
+    .faiss { --accent: var(--green); } .llm { --accent: var(--purple); }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--line), transparent); margin: 48px 0 12px; }
+    .question-flow { grid-template-columns: 1.15fr 1fr 1fr 1.15fr; }
+    .question-flow .node { min-height: 195px; }
+    .key { margin-top: 42px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .memory, .reality { padding: 23px; border-radius: 18px; border: 1px solid var(--line); background: rgba(14, 21, 40, .68); }
+    .memory { border-color: rgba(79,209,232,.35); }
+    .reality { border-color: rgba(167,139,250,.35); }
+    h3 { font-size: .98rem; margin: 0 0 8px; } .key p { margin: 0; color: var(--muted); line-height: 1.55; }
+    code { padding: 2px 6px; border-radius: 5px; color: var(--ink); background: rgba(255,255,255,.09); font-size: .88em; }
+    .pulse { display: inline-block; width: 9px; height: 9px; margin-right: 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 16px var(--green); }
+    @media (max-width: 850px) { .flow { grid-template-columns: 1fr 1fr; } .node:not(:last-child)::after { display: none; } .node { min-height: 175px; } }
+    @media (max-width: 520px) { main { width: min(100% - 24px, 1150px); padding-top: 35px; } .flow, .question-flow, .key { grid-template-columns: 1fr; } h1 { letter-spacing: -.045em; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">pdf-ai-chat-app · quick visual guide</div>
+    <h1>How your PDF becomes a chat partner.</h1>
+    <p class="intro">The app does two different jobs: it builds a searchable <b>memory</b> once at upload time, then looks up that memory whenever someone asks a question.</p>
+    <div class="legend"><span class="chip"><b>Upload time</b> = prepare the memory</span><span class="chip"><b>Question time</b> = retrieve evidence, then answer</span></div>
+
+    <div class="section-label"><span>Part 1</span> Upload time — build the searchable memory</div>
+    <section class="flow" aria-label="PDF upload pipeline">
+      <article class="node pdf"><div class="icon">📄</div><div class="step">01 · PyPDF2</div><h2>Extract text</h2><p>Reads every PDF page and turns it into plain words.</p></article>
+      <article class="node split"><div class="icon">✂️</div><div class="step">02 · Text splitter</div><h2>Make chunks</h2><p>Creates 1,000-character notes with a 200-character overlap so ideas do not get cut off.</p></article>
+      <article class="node embed"><div class="icon">✦</div><div class="step">03 · OpenAI embeddings</div><h2>Map meaning</h2><p>Turns every chunk into a vector: coordinates based on its meaning.</p></article>
+      <article class="node faiss"><div class="icon">⌕</div><div class="step">04 · FAISS</div><h2>Build the index</h2><p>Organizes vectors so similar meanings can be found extremely fast.</p></article>
+      <article class="node faiss"><div class="icon">💾</div><div class="step">05 · save_local</div><h2>Save to disk</h2><p>Stores the index in <code>UPLOADED_PDF_FILE_INDEX</code> for later.</p></article>
+    </section>
+
+    <div class="divider"></div>
+    <div class="section-label"><span>Part 2</span> Question time — look up, then answer</div>
+    <section class="flow question-flow" aria-label="Question answer pipeline">
+      <article class="node pdf"><div class="icon">💬</div><div class="step">01 · User</div><h2>Ask a question</h2><p>“What is the refund period?” arrives at the <code>/query</code> endpoint.</p></article>
+      <article class="node faiss"><div class="icon">📂</div><div class="step">02 · load_local</div><h2>Open saved memory</h2><p>The app reloads the previously saved FAISS index. No need to re-read the PDF.</p></article>
+      <article class="node faiss"><div class="icon">🔎</div><div class="step">03 · similarity_search</div><h2>Find evidence</h2><p>FAISS brings back the 3 chunks whose meaning is closest to the question.</p></article>
+      <article class="node llm"><div class="icon">🤖</div><div class="step">04 · LangChain + ChatOpenAI</div><h2>Answer with context</h2><p><span class="pulse"></span>Retrieved chunks + question go to the LLM, which writes the final answer.</p></article>
+    </section>
+
+    <section class="key">
+      <article class="memory"><h3>Remember the RAG rule</h3><p><b>Look it up, then answer.</b> FAISS finds relevant PDF evidence; the LLM turns that evidence into a natural-language reply.</p></article>
+      <article class="reality"><h3>Who does what?</h3><p><b>PyPDF2 reads.</b> <b>The splitter makes notes.</b> <b>Embeddings map meaning.</b> <b>FAISS retrieves.</b> <b>LangChain coordinates.</b> <b>The LLM answers.</b></p></article>
+    </section>
+  </main>
+</body>
+</html>

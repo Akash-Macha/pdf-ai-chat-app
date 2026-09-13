@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/api/*"
+  to = "https://pdf-ai-chat-app-back-end.onrender.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

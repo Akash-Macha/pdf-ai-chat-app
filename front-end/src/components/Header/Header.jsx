@@ -1,20 +1,20 @@
 import { ActionIcon, Group, Text, Tooltip, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconFileText, IconLogout2, IconMoon, IconSun } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { clearToken, isAuthenticated } from '../../auth';
+import { useAuth } from '../../hooks/use-auth';
 
 const Header = () => {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light');
   const navigate = useNavigate();
-  const authenticated = isAuthenticated();
+  const { isAuthenticated: authenticated, logout } = useAuth();
 
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
   };
 
-  const handleLogout = () => {
-    clearToken();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

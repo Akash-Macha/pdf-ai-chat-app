@@ -14,20 +14,26 @@ Publicly accessible URL:
 - React
 - Vite
 - JavaScript
-- Material UI (MUI)
+- Mantine UI (light/dark/system theme)
 - React Router
 - React Query
 - Axios
 
 ### Backend
-- Python
+- Python 3.12
 - FastAPI
 - Uvicorn
+- PyJWT
 - PyPDF2
 - LangChain
 - FAISS
 - OpenAI API
 - python-dotenv
+
+### Auth
+- Single hardcoded user (email/password from environment variables)
+- JWT session, delivered as an httpOnly cookie (not readable by JavaScript, so an XSS bug can't steal it)
+- Frontend and backend share one origin at request time via a same-origin `/api` proxy (Vite dev proxy locally, Netlify redirect in production), which keeps the cookie first-party instead of cross-site
 
 ### AI / Retrieval Flow
 - PDF text extraction using PyPDF2
@@ -40,23 +46,25 @@ Publicly accessible URL:
 
 ### 1. Backend setup
 
+Requires Python 3.12 (see `back-end/.python-version`) — a newer Python (e.g. 3.14) breaks this project's LangChain/pydantic dependency stack.
+
 From the project root:
 
 ```bash
 cd back-end
-python -m venv .venv
+python -m venv virtual-env
 ```
 
 On Windows:
 
 ```bash
-.venv\Scripts\activate
+.\virtual-env\Scripts\activate
 ```
 
 On macOS/Linux:
 
 ```bash
-source .venv/bin/activate
+source virtual-env/bin/activate
 ```
 
 Then install dependencies:
@@ -65,10 +73,17 @@ Then install dependencies:
 pip install -r requirements.txt
 ```
 
-Create a `.env` file in the `back-end` folder with your OpenAI key:
+Copy `back-end/.env.example` to `back-end/.env` and fill in your OpenAI key:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
+
+# Login credentials for this app's single-user auth
+APP_USER_EMAIL=test@test.com
+APP_USER_PASSWORD=test
+
+# Secret used to sign login JWTs - set a long random value in production
+JWT_SECRET_KEY=
 ```
 
 Start the backend server:
@@ -99,47 +114,38 @@ The frontend runs by default at:
 http://localhost:5173
 ```
 
-> Note: the frontend uses a Vite environment variable for the backend URL. The default is `http://localhost:8000` for local development.
->
-> To use the deployed backend instead, set `VITE_API_BASE_URL=https://pdf-ai-chat-app-backend.onrender.com` in a `.env` file or your deployment environment.
->
-> Example `.env` file:
->
-> ```env
-> VITE_API_BASE_URL=http://localhost:8000
-> ```
->
-> For production, use:
->
-> ```env
-> VITE_API_BASE_URL=https://pdf-ai-chat-app-backend.onrender.com
-> ```
->
-> This keeps the same codebase working in both local and deployed environments without changing the source file each time.
+No `VITE_API_BASE_URL` (or any env var) is needed — the frontend always calls a relative `/api` path. Vite's dev server proxies `/api` to `http://localhost:8000` locally (see `vite.config.js`), and `netlify.toml` proxies `/api` to the deployed Render backend in production. This keeps API requests same-origin, which is what lets the auth cookie be a normal first-party cookie instead of a cross-site one.
+
+### 3. Log in
+
+Sign in with the credentials from `back-end/.env` (`APP_USER_EMAIL`/`APP_USER_PASSWORD`, default `test@test.com` / `test`) to reach the upload and chat screens — they're behind a login gate.
 
 ## Frontend Implementation Brief
 
 The frontend is built with React and Vite and uses a simple multi-page flow:
 
-- A landing page introduces the app and routes users to the PDF upload screen.
-- The upload screen lets the user select a PDF and submit it to the backend API.
+- A login screen gates the app; on success the backend sets an httpOnly session cookie and the user is routed to the PDF upload screen.
+- The upload screen lets the user drag-and-drop or select a PDF and submit it to the backend API.
 - After upload succeeds, the app navigates to the chat screen.
-- The chat screen displays a question-and-answer history and sends user prompts to the backend via Axios.
-- React Query is used for API state management, while Material UI handles the user interface styling.
+- The chat screen displays a question-and-answer history (with a loading indicator while waiting on the backend) and sends user prompts to the backend via Axios.
+- `/pdf-upload` and `/chat-with-pdf` are protected routes: a `RequireAuth` wrapper checks session state (via a `GET /me` call, cached in a React Context) and redirects to the login screen if there's no valid session.
+- React Query is used for API state management. Mantine handles the UI, including a light/dark/system color-scheme toggle in the header.
 
-The app structure follows a component-based approach with separate screens for upload and chat, along with reusable UI elements such as the header, footer, loader, and route configuration.
+The app structure follows a component-based approach with separate screens for login, upload, and chat, along with reusable UI elements such as the header (theme toggle + logout) and footer.
 
 ## Backend Implementation Brief
 
-The backend is built with FastAPI and is responsible for the document processing pipeline:
+The backend is built with FastAPI and is responsible for auth and the document processing pipeline:
 
+- `POST /login` checks the submitted email/password against `APP_USER_EMAIL`/`APP_USER_PASSWORD`, and on success signs a JWT (PyJWT) and sets it as an httpOnly, `SameSite=Lax` cookie. `POST /logout` clears it, and `GET /me` reports whether the current request's cookie is a valid session.
+- `/upload-pdf`, `/query`, and `/loaded-pdfs` all require that session cookie (a FastAPI dependency validates and decodes the JWT on each request).
 - The `/upload-pdf` endpoint accepts a PDF file upload.
 - The code reads the uploaded PDF and extracts text using PyPDF2.
 - The extracted text is split into chunks using LangChain's `RecursiveCharacterTextSplitter`.
-- Each chunk is converted into embeddings using OpenAI embeddings and stored in a FAISS vector database.
-- The `/query` endpoint receives a question, performs a similarity search over the vector store, and passes the most relevant document chunks to a LangChain question-answering chain.
+- Each chunk is converted into embeddings using OpenAI embeddings and stored in a FAISS vector store, persisted to disk with FAISS's own `save_local`.
+- The `/query` endpoint receives a question, performs a similarity search over the vector store (loaded back via `FAISS.load_local`), and passes the most relevant document chunks to a LangChain question-answering chain.
 - The result is returned as a response to the frontend.
-- The `/loaded-pdfs` endpoint lists the PDFs that have already been processed and stored locally.
+- The `/loaded-pdfs` endpoint reports whether a PDF has already been processed and stored locally.
 
 This architecture is a lightweight retrieval-augmented generation (RAG) setup: the app retrieves relevant PDF content before asking the LLM to answer questions.
 

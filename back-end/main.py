@@ -1,9 +1,9 @@
 import os
-from fastapi import Depends, FastAPI, File, UploadFile
+from fastapi import Depends, FastAPI, File, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from auth import LoginRequest, authenticate, get_current_user
+from auth import LoginRequest, authenticate, clear_auth_cookie, get_current_user, set_auth_cookie
 from handle_query import handle_query, VECTORSTORE_DIR
 
 from datetime import datetime
@@ -38,9 +38,19 @@ app.add_middleware(
 # APIs
 
 @app.post('/login')
-def login(request: LoginRequest):
+def login(request: LoginRequest, response: Response):
     token = authenticate(request.email, request.password)
-    return {"token": token}
+    set_auth_cookie(response, token)
+    return {"email": request.email}
+
+@app.post('/logout')
+def logout(response: Response):
+    clear_auth_cookie(response)
+    return {"ok": True}
+
+@app.get('/me')
+def me(user: str = Depends(get_current_user)):
+    return {"email": user}
 
 @app.get('/loaded-pdfs')
 def get_loaded_pdfs(user: str = Depends(get_current_user)):

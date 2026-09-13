@@ -4,10 +4,11 @@ import { Alert, Button, Center, Paper, PasswordInput, Stack, Text, TextInput, Ti
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconLogin2 } from '@tabler/icons-react';
 import axios from '../../axios-api';
-import { setToken } from '../../auth';
+import { useAuth } from '../../hooks/use-auth';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { refresh } = useAuth();
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,8 +24,8 @@ const Login = () => {
     setError(null);
     setIsLoading(true);
     try {
-      const response = await axios.post('/login', values);
-      setToken(response.data.token);
+      await axios.post('/login', values);
+      await refresh();
       navigate('/pdf-upload');
     } catch (err) {
       if (err.response?.status === 401) {

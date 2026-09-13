@@ -7,6 +7,7 @@ import NotFound from './components/NotFound/NotFound';
 import RequireAuth from './components/RequireAuth';
 import AppLayout from './components/Layout/AppLayout';
 import PdfUploadScreen from './components/PdfUploadScreen/PdfUploadScreen';
+import { AuthProvider } from './context/AuthContext';
 const LandingPage = lazy(() => import('./components/LandingPage'))
 const ChatScreen = lazy(() => import('./components/ChatScreen/ChatScreen'))
 
@@ -59,7 +60,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </QueryClientProvider>
   )
 };
