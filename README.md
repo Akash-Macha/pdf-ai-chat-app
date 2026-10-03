@@ -6,7 +6,7 @@ This project is a PDF-based Q&A application that lets users upload a PDF documen
 
 Publicly accessible URL:
 
-[https://pdf-ai-chat-app.netlify.app](https://pdf-ai-chat-app.netlify.app)
+* [https://pdf-ai-chat-app.netlify.app](https://pdf-ai-chat-app.netlify.app)
 
 ## Tech Stack
 
@@ -52,6 +52,9 @@ From the project root:
 
 ```bash
 cd back-end
+```
+
+```bash
 python -m venv virtual-env
 ```
 
@@ -104,7 +107,11 @@ From the project root:
 
 ```bash
 cd front-end
+```
+```bash
 npm install
+```
+```bash
 npm run dev
 ```
 
